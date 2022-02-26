@@ -1,4 +1,7 @@
 #%%
+#os library version
+from pathlib import Path
+
 # Data libraries
 import pandas as pd
 import numpy as np
@@ -7,9 +10,7 @@ import re
 # sklearn modules
 import sklearn
 from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.model_selection import train_test_split
-from imblearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
+
 
 # extra modules
 from schrutepy import schrutepy
@@ -74,9 +75,9 @@ df["multi_part"] = [int(not int(pd.isnull(re.search(p,i)))) for i in df["episode
 
 mlb = MultiLabelBinarizer()
 # Multiple OHE for columns with arrays
-ddat = pd.DataFrame(mlb.fit_transform(df.iloc[:,3]), columns = mlb.classes_+ "_dummy")
-wdat = pd.DataFrame(mlb.fit_transform(df.iloc[:,4]), columns = mlb.classes_+ "_dummy")
-adat = pd.DataFrame(mlb.fit_transform(df.iloc[:,12]), columns = mlb.classes_+ "_dummy")
+ddat = pd.DataFrame(mlb.fit_transform(df.iloc[:,3]), columns=mlb.classes_+ "_dummy")
+wdat = pd.DataFrame(mlb.fit_transform(df.iloc[:,4]), columns=mlb.classes_+ "_dummy")
+adat = pd.DataFrame(mlb.fit_transform(df.iloc[:,12]), columns=mlb.classes_+ "_dummy")
 
 col_in = [i for i in range(0,df.shape[1])]
 col_in.remove(3)
@@ -87,7 +88,7 @@ df   = pd.concat([df[df.columns[col_in]], ddat, wdat, adat], axis = 1)
 
 
 # %%
-df.to_csv("full_raw_dat.csv")
+df.to_csv("data/full_raw_dat.csv", index=False)
 
 # remove unused columns and observations
 col_drop = ["episode_name", "season_ep", "air_date", "episode"]
@@ -95,18 +96,5 @@ p        = re.compile("Part [12]")
 row_drop = [pd.isnull(re.search(p,i)) for i in df["episode_name"]]
 fdat     = df.drop(col_drop,axis=1).iloc[row_drop,:]
 
-# convert season to object
-fdat.season = fdat.season.astype(str)
-
-fdat.to_csv("full_filtered_dat.csv")
-# %%
-
-X = fdat.drop("imdb_rating", axis=1)
-y = fdat.imdb_rating
-
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.33,random_state=5)
-X_train.to_csv("split_X_train_raw.csv")
-X_test.to_csv("split_X_test_raw.csv")
-y_train.to_csv("split_y_train_raw.csv")
-y_test.to_csv("split_y_test_raw.csv")
-
+Path("data").mkdir(parents=True, exist_ok=True)
+fdat.to_csv("data/full_filtered_dat.csv", index=False)
