@@ -24,10 +24,10 @@ y = fdat.imdb_rating
 # write raw files 
 Path(f"./data/seed_{SEED}").mkdir(parents=True, exist_ok=True)
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.33,random_state=SEED)
-X_train.to_csv(f"data/SEED_{SEED}/X_train_raw.csv")
-X_test.to_csv(f"data/SEED_{SEED}/X_test_raw.csv")
-y_train.to_csv(f"data/SEED_{SEED}/y_train_raw.csv")
-y_test.to_csv(f"data/SEED_{SEED}/y_test_raw.csv")
+X_train.to_csv(f"data/SEED_{SEED}/X_train_raw.csv", index=False)
+X_test.to_csv(f"data/SEED_{SEED}/X_test_raw.csv", index=False)
+y_train.to_csv(f"data/SEED_{SEED}/y_train_raw.csv", index=False)
+y_test.to_csv(f"data/SEED_{SEED}/y_test_raw.csv", index=False)
 
 # create pipeline for scalers
 std_scale = Pipeline([('standard', StandardScaler())])
@@ -51,7 +51,20 @@ std_prep = ColumnTransformer(
 #%%
 # fit scaler on training data
 minmax_prep.fit(X_train)
-min_test = pd.DataFrame(minmax_prep.transform(X_test))
-max_train = pd.DataFrame(minmax_prep.transform(X_train))
-t.columns = X_train.columns
+minmax_test = pd.DataFrame(minmax_prep.transform(X_test))
+minmax_train = pd.DataFrame(minmax_prep.transform(X_train))
+minmax_train.columns = X_train.columns
+minmax_test.columns = X_train.columns
+
+std_prep.fit(X_train)
+std_test = pd.DataFrame(std_prep.transform(X_test))
+std_train = pd.DataFrame(std_prep.transform(X_train))
+std_train.columns = X_train.columns
+std_test.columns = X_train.columns
 #%%
+minmax_train.to_csv(f"data/SEED_{SEED}/X_train_minmax.csv", index=False)
+minmax_test.to_csv(f"data/SEED_{SEED}/X_test_minmax.csv", index=False)
+std_train.to_csv(f"data/SEED_{SEED}/X_train_std.csv", index=False)
+std_test.to_csv(f"data/SEED_{SEED}/X_test_std.csv", index=False)
+
+# %%
