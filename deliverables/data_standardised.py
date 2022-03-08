@@ -18,15 +18,18 @@ fdat = pd.read_csv("data/full_filtered_dat.csv")
 X = fdat.drop("imdb_rating", axis=1)
 y = fdat.imdb_rating
 
-binlist = [y<= 7.2, y <= 7.7, y <= 8.2, y <= 8.7, y <= 9.2, y <= 9.7]
-binnames = ['1','2', '3', "4", '5', "6"]
+binlist = [y<= 7, y <= 8, y <= 9, y <= 10]
+binnames = ['1','2', '3', "4"]
 y_class = pd.Series(np.select(binlist, binnames, default='unknown'))
 
 # write raw files 
 Path(f"./data/seed_{SEED}").mkdir(parents=True, exist_ok=True)
-X_train, X_test, y_train, y_test = train_test_split(X,y_class,test_size=0.33,random_state=SEED)
+X_train, X_test, y_train_cl, y_test_cl = train_test_split(X,y_class,test_size=0.33,random_state=SEED, stratify = y_class)
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.33,random_state=SEED, stratify = y_class)
 X_train.to_csv(f"data/SEED_{SEED}/X_train_raw.csv", index=False)
 X_test.to_csv(f"data/SEED_{SEED}/X_test_raw.csv", index=False)
+y_train_cl.to_csv(f"data/SEED_{SEED}/y_train_cl.csv", index=False)
+y_test_cl.to_csv(f"data/SEED_{SEED}/y_test_cl.csv", index=False)
 y_train.to_csv(f"data/SEED_{SEED}/y_train.csv", index=False)
 y_test.to_csv(f"data/SEED_{SEED}/y_test.csv", index=False)
 
