@@ -11,11 +11,10 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
 
-SEED = 5
+SEED = 55
 #%%
 # read full data
 fdat = pd.read_csv("data/full_filtered_dat.csv")
-fdat.season = fdat.season.map(str)
 # separate train and test data
 X = fdat.drop("imdb_rating", axis=1)
 y = fdat.imdb_rating

@@ -91,10 +91,11 @@ df   = pd.concat([df[df.columns[col_in]], ddat, wdat, adat], axis = 1)
 df.to_csv("data/full_raw_dat.csv", index=False)
 
 # remove unused columns and observations
-col_drop = ["episode_name", "season_ep", "air_date", "episode"]
+col_drop = ["episode_name", "season_ep", "air_date", "episode", "total_votes", "season"]
 p        = re.compile("Part [12]")
 row_drop = [pd.isnull(re.search(p,i)) for i in df["episode_name"]]
 fdat     = df.drop(col_drop,axis=1).iloc[row_drop,:]
 
 Path("data").mkdir(parents=True, exist_ok=True)
 fdat.to_csv("data/full_filtered_dat.csv", index=False)
+# %%
