@@ -39,7 +39,7 @@ line_perc = line_sum.groupby("character").agg({"lines": "sum"}).sort_values(asce
 line_perc['percentage'] = line_perc/(line_perc.sum())
 
 ##Greater than 1% line share
-main_char = line_perc.loc[line_perc['percentage'] > 0.01].index
+main_char = line_perc.loc[line_perc['percentage'] > 0.005].index
 
 ##Top 10 line speakers (main_char)
 # main_char = (line_perc.nlargest(10, 'percentage')).index
@@ -77,13 +77,13 @@ mlb = MultiLabelBinarizer()
 # Multiple OHE for columns with arrays
 ddat = pd.DataFrame(mlb.fit_transform(df.iloc[:,3]), columns=mlb.classes_+ "_dummy")
 wdat = pd.DataFrame(mlb.fit_transform(df.iloc[:,4]), columns=mlb.classes_+ "_dummy")
-adat = pd.DataFrame(mlb.fit_transform(df.iloc[:,12]), columns=mlb.classes_+ "_dummy")
+#adat = pd.DataFrame(mlb.fit_transform(df.iloc[:,12]), columns=mlb.classes_+ "_dummy")
 
 col_in = [i for i in range(0,df.shape[1])]
 col_in.remove(3)
 col_in.remove(4)
 col_in.remove(12)
-df   = pd.concat([df[df.columns[col_in]], ddat, wdat, adat], axis = 1)
+df   = pd.concat([df[df.columns[col_in]], ddat, wdat], axis = 1)
 
 
 
