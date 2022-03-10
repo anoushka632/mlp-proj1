@@ -13,7 +13,7 @@ P = .005
 from schrutepy import schrutepy
 
 
-d = pd.read_csv("../the_office.csv")
+d = pd.read_csv("the_office.csv")
 transcripts = schrutepy.load_schrute()
 
 ##string cols
