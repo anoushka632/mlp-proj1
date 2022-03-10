@@ -21,7 +21,6 @@ y = fdat.imdb_rating
 binlist = [y<= 7.5, y <= 8.5, y <= 9, y <= 10]
 binnames = ['1','2', '3', "4"]
 y_class = pd.Series(np.select(binlist, binnames, default='unknown'))
-np.unique(y_class, return_count=True)
 
 # write raw files 
 Path(f"./data/seed_{SEED}").mkdir(parents=True, exist_ok=True)
