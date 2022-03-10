@@ -6,10 +6,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import re
-
-# sklearn modules
-import sklearn
-from sklearn.preprocessing import MultiLabelBinarizer
+P = .005
 
 
 # extra modules
@@ -39,7 +36,7 @@ line_perc = line_sum.groupby("character").agg({"lines": "sum"}).sort_values(asce
 line_perc['percentage'] = line_perc/(line_perc.sum())
 
 ##Greater than 1% line share
-main_char = line_perc.loc[line_perc['percentage'] > 0.01].index
+main_char = line_perc.loc[line_perc['percentage'] > P].index
 
 ##Top 10 line speakers (main_char)
 # main_char = (line_perc.nlargest(10, 'percentage')).index
@@ -100,7 +97,8 @@ def split_col(column, df):
     ##For each episode, check which writers/directors are present and put into a dictionary
     ##Each column is an individual writer/director; each row is an episode
     ##The value of row, column is T/F for whether a writer/director is present
-    items_df = df[column].apply(lambda x: i in x for i in items)
+    #items_df = df[column].apply(lambda x: i in x for i in items)
+    items_df = pd.DataFrame(list(map(lambda x: [i in x for i in items], df[column])))
     items_df = items_df.astype(int) ##convert boolean T/F to 1/0
     items_df.columns = [str(x) + "_dummy" + "_" + column for x in items] ##item names + "dummy"
     
@@ -167,7 +165,7 @@ df.columns = df.columns.str.replace(' ', '_')
 df.to_csv("data/full_raw_dat.csv", index=False)
 
 # remove unused columns and observations
-col_drop = ["episode_name", "season_ep", "air_date", "episode"]
+col_drop = ["episode_name", "season_ep", "air_date", "episode", "total_votes", "season", "writer", "director", 'main_chars']
 p        = re.compile("Part [12]")
 row_drop = [pd.isnull(re.search(p,i)) for i in df["episode_name"]]
 fdat     = df.drop(col_drop,axis=1).iloc[row_drop,:]
