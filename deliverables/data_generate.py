@@ -99,3 +99,41 @@ fdat     = df.drop(col_drop,axis=1).iloc[row_drop,:]
 Path("data").mkdir(parents=True, exist_ok=True)
 fdat.to_csv("data/full_filtered_dat.csv", index=False)
 # %%
+
+import rpy2
+from rpy2 import robjects
+
+
+#%%
+label_dat = pd.DataFrame({
+"labels" : ['S1','S2','S3','S4','S5','S6','S7','S8','S9'],
+"season_ep" : ['S1-EP3','S2-EP11','S3-EP12','S4-EP11','S5-EP14','S6-EP13','S7-EP13','S8-EP12','S9-EP11']})
+
+vline_mark = pd.DataFrame({
+"episode" : ['7','29','52','66','92','116','140','164','187'],
+"season" : ['1','2','3','4','5','6','7','8','9']})
+
+season_brks = ['S1-EP1','S1-EP6','S2-EP5','S2-EP10','S2-EP15','S2-EP20','S3-EP3','S3-EP8','S3-EP14','S3-EP19','S3-EP24','S4-EP9','S4-EP14','S5-EP1','S5-EP7','S5-EP12','S5-EP18','S5-EP23','S5-EP28','S6-EP6','S6-EP11','S6-EP16','S6-EP22','S7-EP1','S7-EP6','S7-EP11','S7-EP17','S7-EP22','S8-EP2','S8-EP7','S8-EP12','S8-EP17','S8-EP22','S9-EP3','S9-EP8','S9-EP13','S9-EP18','S9-EP24']
+# %%
+df.season_ep = d.apply(lambda x : "S" + str(x["season"]) + "-EP" + "" + str(x["episode"]), axis = 1)
+# %%
+df = df.merge(label_dat, how = "left", on="season_ep")
+# %%
+import plotnine as pn 
+df.season_ep = pd.Categorical(df.season_ep, categories=df.season_ep, ordered=True
+)
+
+# %%
+p = (pn.ggplot(df) +
+pn.aes(x = "season_ep", y = "imdb_rating") +
+pn.geom_point(shape = 0)  +
+pn.geom_line(pn.aes(group = 1)) +
+pn.geom_vline(xintercept = vline_mark.episode, linetype = 'dashed') +
+pn.geom_text(pn.aes(y = 10, label = "labels"), colour = 'black', size = 8) +
+#pn.scale_x_continuous(breaks = [1], labels = "season_ep") +
+pn.scale_x_discrete(breaks = season_brks) +
+pn.ylim([6.5,10]) +
+pn.theme_minimal()+
+pn.theme(axis_text_x = pn.element_text(angle = -45, hjust = -.05)))
+
+# %%
